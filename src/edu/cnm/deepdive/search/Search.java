@@ -20,15 +20,15 @@ public class Search {
   public static void main(String[] args) {
     try {
       ResourceBundle resources = getBundle(RESOURCE_BUNDLE_NAME);
-      int needle = getSearchValue(args, resources);
-      Integer[] haystack = readValues(resources);
-      int foundPosition = findValue(needle, haystack);
+      int targetVal = getSearchValue(args, resources);
+      Integer[] dataArray = readValues(resources);
+      int foundPosition = findValue(targetVal, dataArray);
       if (foundPosition >= 0) {
         System.out.printf(resources.getString(FOUND_MESSAGE_KEY), 
-                          needle, foundPosition);
+                          targetVal, foundPosition);
       } else {
         System.out.printf(resources.getString(NOT_FOUND_MESSAGE_KEY), 
-                          needle, ~foundPosition);        
+                          targetVal, ~foundPosition);        
       }
     } catch (Exception ex) {
       // Do nothing.
@@ -46,16 +46,16 @@ public class Search {
     } catch (NumberFormatException ex) {
       System.out.printf(resources.getString(PARSE_ERROR_MESSAGE_KEY));
       System.out.printf(resources.getString(USAGE_MESSAGE_KEY), 
-          Generator.class.getName());
+          Search.class.getName());
       throw ex;
     } catch (IllegalArgumentException ex) {
       System.out.printf(resources.getString(VALUE_ERROR_MESSAGE_KEY));
       System.out.printf(resources.getString(USAGE_MESSAGE_KEY), 
-          Generator.class.getName());
+          Search.class.getName());
       throw ex;
     } catch (ArrayIndexOutOfBoundsException ex) {
       System.out.printf(resources.getString(USAGE_MESSAGE_KEY), 
-          Generator.class.getName());
+          Search.class.getName());
       throw ex;
     }
   }
@@ -81,26 +81,26 @@ public class Search {
     }
   }
   
-  private static int findValue(int needle, Integer[] haystack) {
-    return findValue(needle, haystack, 0, haystack.length);
+  private static int findValue(int targetVal, Integer[] dataArray) {
+    int index = dataArray.length/2 - 1;
+    int change = index;
+    while (dataArray[index] != targetVal){
+      if(change != 0) {
+        if(dataArray[index] > targetVal) {
+          change >>= 1;
+          index -= change;
+        }else if(dataArray[index] < targetVal){
+          change >>= 1;
+          index += change;
+        }else {
+          return index;
+        }
+      }else {
+        index = ~index;
+      }    
+    }
+    return index;
   }
-  
-  private static int findValue(int needle, Integer[] haystack, 
-      int start, int end) {
-    if (end <= start) {
-      return ~start;
-    }
-    int midpoint = (start + end) >> 1;
-    int test = haystack[midpoint];
-    if (test == needle) {
-      return midpoint;
-    }
-    if (test < needle) {
-      return findValue(needle, haystack, midpoint + 1, end);
-    }
-    return findValue(needle, haystack, start, midpoint);
-  }
-  
 }
 
 
