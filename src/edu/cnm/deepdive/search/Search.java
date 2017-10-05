@@ -87,17 +87,17 @@ public class Search {
     while (dataArray[index] != targetVal){
       if(change != 0) {
         if(dataArray[index] > targetVal) {
-          change >>= 1;
           index -= change;
-        }else if(dataArray[index] < targetVal){
           change >>= 1;
+        }else if(dataArray[index] < targetVal){
           index += change;
+          change >>= 1;
         }else {
           return index;
         }
       }else {
-        index = ~index;
-      }    
+        return ~index;
+      } 
     }
     return index;
   }
